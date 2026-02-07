@@ -1,0 +1,306 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - Heart Disease Prediction{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="mb-1">
+                        <i class="fas fa-cog text-primary"></i>
+                        Admin Control Panel
+                    </h2>
+                    <p class="text-muted mb-0">Complete system management and oversight</p>
+                </div>
+                <div class="d-flex align-items-center">
+                    <span class="badge bg-success me-3">
+                        <i class="fas fa-circle" style="font-size: 0.5rem;"></i>
+                        System Online
+                    </span>
+                    <a href="{{ url_for('doctor_appointments') }}" class="btn btn-primary me-2">
+                        <i class="fas fa-user-md me-2"></i>
+                        Manage Appointments
+                    </a>
+                    <a href="{{ url_for('admin_system') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-cogs me-2"></i>
+                        System Settings
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Navigation -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <a href="{{ url_for('admin_users') }}" class="btn btn-outline-primary w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3">
+                                <i class="fas fa-users mb-2" style="font-size: 2rem;"></i>
+                                <span class="fw-bold">User Management</span>
+                                <small class="text-muted">{{ total_users }} users</small>
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{{ url_for('admin_predictions') }}" class="btn btn-outline-success w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3">
+                                <i class="fas fa-chart-line mb-2" style="font-size: 2rem;"></i>
+                                <span class="fw-bold">Predictions</span>
+                                <small class="text-muted">{{ total_predictions }} assessments</small>
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{{ url_for('admin_appointments') }}" class="btn btn-outline-info w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3">
+                                <i class="fas fa-calendar-check mb-2" style="font-size: 2rem;"></i>
+                                <span class="fw-bold">Appointments</span>
+                                <small class="text-muted">{{ total_appointments }} total</small>
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{{ url_for('admin_system') }}" class="btn btn-outline-warning w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3">
+                                <i class="fas fa-cogs mb-2" style="font-size: 2rem;"></i>
+                                <span class="fw-bold">System</span>
+                                <small class="text-muted">Settings & Maintenance</small>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h6 class="text-muted mb-1">Total Users</h6>
+                            <h3 class="mb-0 text-primary">{{ total_users }}</h3>
+                            <small class="text-muted">Registered patients</small>
+                        </div>
+                        <div class="ms-3">
+                            <i class="fas fa-users text-primary" style="font-size: 2rem;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h6 class="text-muted mb-1">Total Assessments</h6>
+                            <h3 class="mb-0 text-success">{{ total_predictions }}</h3>
+                            <small class="text-muted">Heart health evaluations</small>
+                        </div>
+                        <div class="ms-3">
+                            <i class="fas fa-stethoscope text-success" style="font-size: 2rem;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h6 class="text-muted mb-1">High Risk Patients</h6>
+                            <h3 class="mb-0 text-danger">{{ high_risk_patients }}</h3>
+                            <small class="text-muted">{{ "%.1f"|format((high_risk_patients / total_predictions * 100) if total_predictions > 0 else 0) }}% of total</small>
+                        </div>
+                        <div class="ms-3">
+                            <i class="fas fa-exclamation-triangle text-danger" style="font-size: 2rem;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h6 class="text-muted mb-1">Pending Appointments</h6>
+                            <h3 class="mb-0 text-warning">{{ pending_appointments }}</h3>
+                            <small class="text-muted">Awaiting confirmation</small>
+                        </div>
+                        <div class="ms-3">
+                            <i class="fas fa-clock text-warning" style="font-size: 2rem;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Risk Distribution -->
+    <div class="row mb-4">
+        <div class="col-lg-4 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-bottom">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-pie text-info me-2"></i>
+                        Risk Level Distribution
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span>High Risk</span>
+                            <span class="fw-bold text-danger">{{ high_risk_patients }}</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-danger" style="width: {{ (high_risk_patients / total_predictions * 100) if total_predictions > 0 else 0 }}%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span>Medium Risk</span>
+                            <span class="fw-bold text-warning">{{ medium_risk_patients }}</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-warning" style="width: {{ (medium_risk_patients / total_predictions * 100) if total_predictions > 0 else 0 }}%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span>Low Risk</span>
+                            <span class="fw-bold text-success">{{ low_risk_patients }}</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-success" style="width: {{ (low_risk_patients / total_predictions * 100) if total_predictions > 0 else 0 }}%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="col-lg-8 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-bottom">
+                    <h5 class="mb-0">
+                        <i class="fas fa-activity text-primary me-2"></i>
+                        Recent Activity
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-muted mb-3">Latest Assessments</h6>
+                            {% if recent_predictions %}
+                                {% for prediction in recent_predictions[:5] %}
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="avatar bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px;">
+                                        {{ prediction.user.first_name[0] }}{{ prediction.user.last_name[0] }}
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="small">{{ prediction.user.first_name }} {{ prediction.user.last_name }}</div>
+                                        <div class="small text-muted">{{ prediction.created_at.strftime('%m/%d %H:%M') }}</div>
+                                    </div>
+                                    <span class="badge bg-{{ 'danger' if prediction.risk_level == 'High' else ('warning' if prediction.risk_level == 'Medium' else 'success') }}">
+                                        {{ prediction.risk_level }}
+                                    </span>
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                                <p class="text-muted small">No recent assessments</p>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <h6 class="text-muted mb-3">Latest Appointments</h6>
+                            {% if recent_appointments %}
+                                {% for appointment in recent_appointments[:5] %}
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="avatar bg-info text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px;">
+                                        {{ appointment.user.first_name[0] }}{{ appointment.user.last_name[0] }}
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="small">{{ appointment.doctor_name }}</div>
+                                        <div class="small text-muted">{{ appointment.created_at.strftime('%m/%d %H:%M') }}</div>
+                                    </div>
+                                    <span class="badge bg-{{ appointment.status_badge_color }}">
+                                        {{ appointment.status.title() }}
+                                    </span>
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                                <p class="text-muted small">No recent appointments</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-bottom">
+                    <h5 class="mb-0">
+                        <i class="fas fa-bolt text-warning me-2"></i>
+                        Quick Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <a href="{{ url_for('doctor_appointments') }}" class="btn btn-success w-100">
+                                <i class="fas fa-user-md me-2"></i>
+                                Review Appointments
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{{ url_for('admin_users') }}" class="btn btn-primary w-100">
+                                <i class="fas fa-users me-2"></i>
+                                Manage Users
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{{ url_for('admin_system') }}" class="btn btn-warning w-100">
+                                <i class="fas fa-cogs me-2"></i>
+                                System Settings
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{{ url_for('admin_predictions') }}" class="btn btn-info w-100">
+                                <i class="fas fa-chart-line me-2"></i>
+                                View Predictions
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+$(document).ready(function() {
+    // Auto-refresh statistics every 30 seconds
+    setInterval(() => {
+        // In a real implementation, you would fetch updated statistics here
+        console.log('Auto-refreshing admin statistics...');
+    }, 30000);
+});
+</script>
+{% endblock %}
